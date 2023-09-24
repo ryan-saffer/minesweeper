@@ -1,6 +1,11 @@
-import { Minesweeper } from "@minesweeper"
+"use client"
+
+import dynamic from "next/dynamic"
+
+const NoSSR = dynamic(() => import("./components/MinesweeperBoard"), {
+  ssr: false,
+})
 
 export default function Home() {
-  const board = new Minesweeper(10, 20)
-  return <h1>Hi</h1>
+  return <NoSSR />
 }

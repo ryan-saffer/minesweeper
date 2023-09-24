@@ -6,6 +6,7 @@ export class Cell {
   column: number
   hasMine: boolean
   revealed = false
+  hasFlag = false
   _value = 0
 
   constructor(row: number, column: number, hasMine: boolean, board: Board) {
@@ -16,13 +17,14 @@ export class Cell {
   }
 
   get value() {
+    if (this.hasMine) return "mine"
     if (!this._value) {
       this._value = this.calculateValue()
     }
     return this._value
   }
 
-  reveal(): "mine" | number {
+  reveal() {
     this.revealed = true
     if (this.hasMine) return "mine"
     return this.value
@@ -40,5 +42,13 @@ export class Cell {
       }
     }
     return count
+  }
+
+  placeFlag() {
+    this.hasFlag = true
+  }
+
+  removeFlag() {
+    this.hasFlag = false
   }
 }

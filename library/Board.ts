@@ -5,22 +5,29 @@ export class Board {
   mineCount: number
   minesPlaced = 0
   board: Cell[][]
+
   constructor(size: number, mineCount: number) {
     this.size = size
     this.mineCount = mineCount
+
     this.board = []
     for (let i = 0; i < size; i++) {
       this.board.push(new Array(size))
     }
 
     while (this.minesPlaced < this.mineCount) {
-      this.placeMines()
+      this.#placeMines()
     }
 
-    this.printBoard()
+    console.log("running constructor")
+    this.#printBoard()
   }
 
-  placeMines() {
+  reveal(row: number, column: number) {
+    return this.board[row][column].reveal()
+  }
+
+  #placeMines() {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         const existingCell = this.board[i][j]
@@ -40,11 +47,11 @@ export class Board {
     }
   }
 
-  printBoard() {
+  #printBoard() {
     let output = ""
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        const value = this.board[i][j].reveal()
+        const value = this.board[i][j].value
         output += value === "mine" ? "'*'" : `'${value}'`
       }
       output += "\n"
