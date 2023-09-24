@@ -1,57 +1,74 @@
 import { Cell } from "./Cell"
 
 export class Board {
-  size: number
-  mineCount: number
-  minesPlaced = 0
-  board: Cell[][]
+  private _size: number
+  private _mineCount: number
+  private _minesPlaced = 0
+  private _board: Cell[][]
+  private _revealedCount = 0
 
   constructor(size: number, mineCount: number) {
-    this.size = size
-    this.mineCount = mineCount
+    this._size = size
+    this._mineCount = mineCount
 
-    this.board = []
+    this._board = []
     for (let i = 0; i < size; i++) {
-      this.board.push(new Array(size))
+      this._board.push(new Array(size))
     }
 
-    while (this.minesPlaced < this.mineCount) {
-      this.#placeMines()
+    while (this._minesPlaced < this._mineCount) {
+      this._placeMines()
     }
 
     console.log("running constructor")
-    this.#printBoard()
+    this._printBoard()
   }
 
-  reveal(row: number, column: number) {
-    return this.board[row][column].reveal()
+  get board() {
+    return this._board
   }
 
-  #placeMines() {
-    for (let i = 0; i < this.size; i++) {
-      for (let j = 0; j < this.size; j++) {
-        const existingCell = this.board[i][j]
+  get size() {
+    return this._size
+  }
+
+  get revealedCount() {
+    return this._revealedCount
+  }
+
+  increaseRevealedCount() {
+    this._revealedCount++
+  }
+
+  _reveal(row: number, column: number) {
+    return this._board[row][column]._reveal()
+  }
+
+  private _placeMines() {
+    for (let i = 0; i < this._size; i++) {
+      for (let j = 0; j < this._size; j++) {
+        const existingCell = this._board[i][j]
         if (!existingCell || !existingCell.hasMine) {
-          if (Math.random() < 1 / this.size) {
-            if (this.minesPlaced < this.mineCount) {
-              this.board[i][j] = new Cell(i, j, true, this)
-              this.minesPlaced++
+          if (Math.random() < 1 / this._size) {
+            if (this._minesPlaced < this._mineCount) {
+              this._board[i][j] = new Cell(i, j, true, this)
+              this._minesPlaced++
             } else {
-              this.board[i][j] = new Cell(i, j, false, this)
+              this._board[i][j] = new Cell(i, j, false, this)
             }
           } else {
-            this.board[i][j] = new Cell(i, j, false, this)
+            this._board[i][j] = new Cell(i, j, false, this)
           }
         }
       }
     }
   }
 
-  #printBoard() {
+  private _printBoard() {
     let output = ""
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        const value = this.board[i][j].value
+        const value = this._board[i][j].value
         output += value === "mine" ? "'*'" : `'${value}'`
       }
       output += "\n"

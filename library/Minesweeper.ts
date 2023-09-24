@@ -1,26 +1,36 @@
 import { Board } from "./Board"
 
 export class Minesweeper {
-  #board: Board
+  private _board: Board
+  private _result: "running" | "won" | "lost" = "running"
 
-  #isRunning = true
-
-  constructor(boardSize: number, mineCount: number) {
-    this.#board = new Board(boardSize, mineCount)
+  constructor(boardSize: number, private _mineCount: number) {
+    this._board = new Board(boardSize, _mineCount)
   }
 
   reveal(row: number, column: number) {
-    const result = this.#board.reveal(row, column)
+    const result = this._board._reveal(row, column)
     if (result === "mine") {
-      this.#isRunning = false
+      this._result = "lost"
     }
+    // check for win
+    if (
+      this._board.size * this._board.size - this._mineCount ===
+      this._board.revealedCount
+    ) {
+      this._result = "won"
+    }
+  }
+
+  placeFlag(row: number, column: number) {
+    this._board.board[row][column].toggleFlag()
   }
 
   getState() {
     return {
       minesPlaced: 5,
-      board: this.#board.board,
-      isRunning: this.#isRunning,
+      board: this._board.board,
+      result: this._result,
     }
   }
 }
