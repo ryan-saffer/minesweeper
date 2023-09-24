@@ -12,6 +12,7 @@ export class Minesweeper {
     const result = this._board._reveal(row, column)
     if (result === "mine") {
       this._result = "lost"
+      this._board.revealAllMines()
     }
     // check for win
     if (
@@ -19,6 +20,7 @@ export class Minesweeper {
       this._board.revealedCount
     ) {
       this._result = "won"
+      this._board.revealBoard()
     }
   }
 

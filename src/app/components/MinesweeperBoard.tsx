@@ -75,7 +75,7 @@ export default function MinesweeperBoard() {
       {gameState.result !== "running" && (
         <div className="flex flex-col justify-center items-center pt-8">
           <h1 className="text-center text-2xl pb-2">
-            {gameState.result === "lost" ? "Game over!" : "You won!"}
+            {gameState.result === "lost" ? "You lost!" : "You won!"}
           </h1>
           <button
             className="bg-red-400 w-min px-5 py-2 mt-2 rounded-md"

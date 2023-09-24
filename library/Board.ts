@@ -19,9 +19,6 @@ export class Board {
     while (this._minesPlaced < this._mineCount) {
       this._placeMines()
     }
-
-    console.log("running constructor")
-    this._printBoard()
   }
 
   get board() {
@@ -38,6 +35,30 @@ export class Board {
 
   increaseRevealedCount() {
     this._revealedCount++
+  }
+
+  revealAllMines() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        const cell = this._board[i][j]
+        if (cell.hasMine) {
+          cell._reveal()
+        }
+      }
+    }
+  }
+
+  revealBoard() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        const cell = this._board[i][j]
+        if (cell.hasMine && !cell.hasFlag) {
+          cell.toggleFlag()
+        } else {
+          cell._reveal()
+        }
+      }
+    }
   }
 
   _reveal(row: number, column: number) {
