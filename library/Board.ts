@@ -2,28 +2,42 @@ import { Cell } from "./Cell"
 
 export class Board {
   size: number
+  mineCount: number
+  minesPlaced = 0
   board: Cell[][]
-  constructor(size: number, private mineCount: number) {
+  constructor(size: number, mineCount: number) {
     this.size = size
+    this.mineCount = mineCount
     this.board = []
     for (let i = 0; i < size; i++) {
-      const row = []
-      for (let j = 0; j < size; j++) {
-        if (Math.random() > 0.5) {
-          if (this.mineCount > 0) {
-            row.push(new Cell(i, j, true, this))
-            this.mineCount--
-          } else {
-            row.push(new Cell(i, j, false, this))
-          }
-        } else {
-          row.push(new Cell(i, j, false, this))
-        }
-      }
-      this.board.push(row)
+      this.board.push(new Array(size))
+    }
+
+    while (this.minesPlaced < this.mineCount) {
+      this.placeMines()
     }
 
     this.printBoard()
+  }
+
+  placeMines() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        const existingCell = this.board[i][j]
+        if (!existingCell || !existingCell.hasMine) {
+          if (Math.random() < 1 / this.size) {
+            if (this.minesPlaced < this.mineCount) {
+              this.board[i][j] = new Cell(i, j, true, this)
+              this.minesPlaced++
+            } else {
+              this.board[i][j] = new Cell(i, j, false, this)
+            }
+          } else {
+            this.board[i][j] = new Cell(i, j, false, this)
+          }
+        }
+      }
+    }
   }
 
   printBoard() {
