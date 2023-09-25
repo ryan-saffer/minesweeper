@@ -3,6 +3,10 @@
 import { MouseEvent, useState } from "react"
 import { Minesweeper } from "@minesweeper"
 import { clsx } from "clsx"
+import Flag from "./icons/Flag"
+import Mine from "./icons/Mine"
+import NumberIcon from "./icons/NumberIcon"
+import IncorrectFlag from "./icons/IncorrectFlag"
 
 const size = 10
 
@@ -36,38 +40,49 @@ export default function MinesweeperBoard() {
     setGameState(minesweeper.getState())
   }
 
+  const renderIcon = (
+    revealed: boolean,
+    hasFlag: boolean,
+    value: "mine" | number
+  ) => {
+    if (revealed) {
+      if (value !== "mine" && hasFlag) {
+        return <IncorrectFlag />
+      }
+      if (value === "mine") {
+        return <Mine />
+      }
+      return <NumberIcon value={value} />
+    } else {
+      if (hasFlag) {
+        return <Flag />
+      } else {
+        return ""
+      }
+    }
+  }
+
   return (
     <div className="p-10">
       {gameState.board.map((row, rowIdx) => (
         <div key={rowIdx} className="flex justify-center">
-          {row.map((col, colIdx) => (
+          {row.map((cell, colIdx) => (
             <div
               key={colIdx}
               className={clsx(
-                "text-center font-bold aspect-square w-8 h-8 flex justify-center items-center border border-gray-500 cursor-pointer",
+                "bg-[#BDBDBD] text-center font-bold text-3xl aspect-square w-10 h-10 flex justify-center items-center border border-[#848484] cursor-pointer relative",
                 {
-                  "bg-gray-300": !col.revealed,
-                  "bg-gray-400": col.revealed,
-                  "text-blue-600": col.revealed && col.value === 1,
-                  "text-green-700": col.revealed && col.value === 2,
-                  "text-red-500": col.revealed && col.value === 3,
-                  "text-blue-950": col.revealed && col.value === 4,
-                  "text-amber-900": col.revealed && col.value === 5,
-                  "text-black": col.revealed && col.hasMine,
+                  "border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4":
+                    !cell.revealed,
+                  "border-t-[#7B7B7B] border-t border-b-[#7B7B7B] border-b":
+                    cell.revealed,
+                  "bg-[#fc0303]": cell.isLosingMine,
                 }
               )}
               onClick={(e) => handleClick(e, rowIdx, colIdx)}
               onContextMenu={(e) => handleClick(e, rowIdx, colIdx)}
             >
-              {col.revealed
-                ? col.value === "mine"
-                  ? "💣"
-                  : col.value !== 0
-                  ? col.value
-                  : ""
-                : col.hasFlag
-                ? "🚩"
-                : ""}
+              {renderIcon(cell.revealed, cell.hasFlag, cell.value)}
             </div>
           ))}
         </div>

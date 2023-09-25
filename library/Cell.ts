@@ -8,6 +8,7 @@ export class Cell {
   private _revealed = false
   private _hasFlag = false
   private _value = 0
+  private _isLosingMine = false
 
   constructor(row: number, column: number, hasMine: boolean, board: Board) {
     this._board = board
@@ -36,6 +37,10 @@ export class Cell {
     return this._hasFlag
   }
 
+  get isLosingMine() {
+    return this._isLosingMine
+  }
+
   private _iterateNeighbours(cb: (cell: Cell) => void) {
     for (let i = this._row - 1; i <= this._row + 1; i++) {
       if (i < 0 || i === this._board.size) continue
@@ -48,15 +53,18 @@ export class Cell {
     }
   }
 
-  _reveal() {
+  _reveal(revealedFromClick = false) {
     if (this.revealed) return
-    if (this._hasFlag) return
+    if (this._hasFlag && this._hasMine) return
+    if (revealedFromClick && this._hasMine) {
+      this._isLosingMine = true
+    }
     this._revealed = true
     this._board.increaseRevealedCount()
     if (this.hasMine) return "mine"
 
     // check all neighbours for 0, and if so, reveal
-    if (this.value === 0 || this._hasFlag) {
+    if (this.value === 0) {
       this._iterateNeighbours((cell) => {
         if (!cell.revealed) {
           cell._reveal()
@@ -76,6 +84,8 @@ export class Cell {
   }
 
   toggleFlag() {
-    this._hasFlag = !this._hasFlag
+    if (!this.revealed) {
+      this._hasFlag = !this._hasFlag
+    }
   }
 }

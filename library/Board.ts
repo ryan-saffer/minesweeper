@@ -19,6 +19,8 @@ export class Board {
     while (this._minesPlaced < this._mineCount) {
       this._placeMines()
     }
+
+    this._printBoard()
   }
 
   get board() {
@@ -41,7 +43,7 @@ export class Board {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         const cell = this._board[i][j]
-        if (cell.hasMine) {
+        if (cell.hasMine || (cell.hasFlag && !cell.hasMine)) {
           cell._reveal()
         }
       }
@@ -61,8 +63,8 @@ export class Board {
     }
   }
 
-  _reveal(row: number, column: number) {
-    return this._board[row][column]._reveal()
+  _reveal(row: number, column: number, revealedFromClick: boolean) {
+    return this._board[row][column]._reveal(revealedFromClick)
   }
 
   private _placeMines() {

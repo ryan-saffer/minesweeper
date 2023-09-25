@@ -9,7 +9,7 @@ export class Minesweeper {
   }
 
   reveal(row: number, column: number) {
-    const result = this._board._reveal(row, column)
+    const result = this._board._reveal(row, column, true)
     if (result === "mine") {
       this._result = "lost"
       this._board.revealAllMines()
