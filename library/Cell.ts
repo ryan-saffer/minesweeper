@@ -7,6 +7,7 @@ export class Cell {
   private _hasMine: boolean
   private _revealed = false
   private _hasFlag = false
+  private _hasQuestionMark = false
   private _value = 0
   private _isLosingMine = false
 
@@ -37,6 +38,10 @@ export class Cell {
     return this._hasFlag
   }
 
+  get hasQuestionMark() {
+    return this._hasQuestionMark
+  }
+
   get isLosingMine() {
     return this._isLosingMine
   }
@@ -56,6 +61,7 @@ export class Cell {
   _reveal(revealedFromClick = false) {
     if (this.revealed) return
     if (this._hasFlag && this._hasMine) return
+    if (this._hasFlag && revealedFromClick) return
     if (revealedFromClick && this._hasMine) {
       this._isLosingMine = true
     }
@@ -64,10 +70,10 @@ export class Cell {
     if (this.hasMine) return "mine"
 
     // check all neighbours for 0, and if so, reveal
-    if (this.value === 0) {
+    if (this.value === 0 && !this.hasFlag) {
       this._iterateNeighbours((cell) => {
         if (!cell.revealed) {
-          cell._reveal()
+          cell._reveal(revealedFromClick)
         }
       })
     }
@@ -85,7 +91,14 @@ export class Cell {
 
   toggleFlag() {
     if (!this.revealed) {
-      this._hasFlag = !this._hasFlag
+      if (this._hasFlag) {
+        this._hasFlag = false
+        this._hasQuestionMark = true
+      } else if (this._hasQuestionMark) {
+        this._hasQuestionMark = false
+      } else {
+        this._hasFlag = true
+      }
     }
   }
 }

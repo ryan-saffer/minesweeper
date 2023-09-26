@@ -7,6 +7,7 @@ import Flag from "./icons/Flag"
 import Mine from "./icons/Mine"
 import NumberIcon from "./icons/NumberIcon"
 import IncorrectFlag from "./icons/IncorrectFlag"
+import QuestionMark from "./icons/QuestionMark"
 
 const size = 10
 
@@ -28,7 +29,7 @@ export default function MinesweeperBoard() {
         minesweeper.reveal(row, col)
       }
       if (e.type === "contextmenu") {
-        minesweeper.placeFlag(row, col)
+        minesweeper.toggleFlag(row, col)
       }
       render()
     }
@@ -43,6 +44,7 @@ export default function MinesweeperBoard() {
   const renderIcon = (
     revealed: boolean,
     hasFlag: boolean,
+    hasQuestionMark: boolean,
     value: "mine" | number
   ) => {
     if (revealed) {
@@ -56,6 +58,8 @@ export default function MinesweeperBoard() {
     } else {
       if (hasFlag) {
         return <Flag />
+      } else if (hasQuestionMark) {
+        return <QuestionMark />
       } else {
         return ""
       }
@@ -82,7 +86,12 @@ export default function MinesweeperBoard() {
               onClick={(e) => handleClick(e, rowIdx, colIdx)}
               onContextMenu={(e) => handleClick(e, rowIdx, colIdx)}
             >
-              {renderIcon(cell.revealed, cell.hasFlag, cell.value)}
+              {renderIcon(
+                cell.revealed,
+                cell.hasFlag,
+                cell.hasQuestionMark,
+                cell.value
+              )}
             </div>
           ))}
         </div>

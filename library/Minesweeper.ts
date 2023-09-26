@@ -24,7 +24,7 @@ export class Minesweeper {
     }
   }
 
-  placeFlag(row: number, column: number) {
+  toggleFlag(row: number, column: number) {
     this._board.board[row][column].toggleFlag()
   }
 

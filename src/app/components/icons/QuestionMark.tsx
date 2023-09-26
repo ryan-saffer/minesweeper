@@ -1,17 +1,12 @@
 export default function QuestionMark() {
   return (
     <svg
-      version="1.1"
-      id="レイヤー_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
+      className="w-full h-full"
       x="0px"
       y="0px"
       width="76px"
       height="76px"
       viewBox="0 0 76 76"
-      enableBackground="new 0 0 76 76"
-      xmlSpace="preserve"
     >
       <g>
         <path
