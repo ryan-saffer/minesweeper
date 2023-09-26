@@ -2,7 +2,7 @@ import { Subject } from "rxjs"
 import { Board } from "./Board"
 
 type GameState = {
-  minesPlaced: number
+  flagsLeft: number
   board: Board["_board"]
   result: "running" | "won" | "lost"
   secondsPlayed: number
@@ -30,7 +30,7 @@ export class Minesweeper {
 
   get initialState(): GameState {
     return {
-      minesPlaced: 0,
+      flagsLeft: this._mineCount,
       board: this._board.board,
       result: "running",
       secondsPlayed: 0,
@@ -62,13 +62,14 @@ export class Minesweeper {
   }
 
   toggleFlag(row: number, column: number) {
-    this._board.board[row][column].toggleFlag()
+    if (this._result !== "running") return
+    this._board.toggleFlag(row, column)
     this._emitState()
   }
 
   private _emitState() {
     this._gameState$.next({
-      minesPlaced: 0,
+      flagsLeft: this._mineCount - this._board.flagsPlaced,
       board: this._board.board,
       result: this._result,
       secondsPlayed: this._secondsPlayed,

@@ -12,6 +12,8 @@ export default function Border({
     | "top-right"
     | "bottom-left"
     | "bottom-right"
+    | "left-borderless"
+    | "right-borderless"
 }) {
   return (
     <div
@@ -30,6 +32,8 @@ export default function Border({
           type === "bottom-left",
         "h-5 w-5 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4":
           type === "bottom-right",
+        "w-5 border-l-white border-l-4": type === "left-borderless",
+        "w-5 border-r-[#7B7B7B] border-r-4": type === "right-borderless",
       })}
     />
   )

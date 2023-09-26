@@ -6,6 +6,7 @@ export class Board {
   private _minesPlaced = 0
   private _board: Cell[][]
   private _revealedCount = 0
+  private _flagsPlaced = 0
 
   constructor(size: number, mineCount: number) {
     this._size = size
@@ -19,8 +20,6 @@ export class Board {
     while (this._minesPlaced < this._mineCount) {
       this._placeMines()
     }
-
-    this._printBoard()
   }
 
   get board() {
@@ -33,6 +32,10 @@ export class Board {
 
   get revealedCount() {
     return this._revealedCount
+  }
+
+  get flagsPlaced() {
+    return this._flagsPlaced
   }
 
   increaseRevealedCount() {
@@ -60,6 +63,16 @@ export class Board {
           cell._reveal()
         }
       }
+    }
+  }
+
+  toggleFlag(row: number, column: number) {
+    const cell = this._board[row][column]
+    cell.toggleFlag()
+    if (cell.hasFlag) {
+      this._flagsPlaced++
+    } else if (cell.hasQuestionMark) {
+      this._flagsPlaced--
     }
   }
 
