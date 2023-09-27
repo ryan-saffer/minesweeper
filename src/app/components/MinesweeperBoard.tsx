@@ -14,7 +14,7 @@ import FaceSad from "./icons/FaceSad"
 import FaceGlasses from "./icons/FaceGlasses"
 import NumberDisplay from "./NumberDisplay"
 
-const size = 18
+const size = 7
 
 export default function MinesweeperBoard() {
   const [minesweeper, setMinesweeper] = useState(

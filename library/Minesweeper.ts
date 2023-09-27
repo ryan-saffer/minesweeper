@@ -10,13 +10,16 @@ type GameState = {
 
 export class Minesweeper {
   private _board: Board
+  private _mineCount: number
   private _result: GameState["result"] = "running"
   private _gameState$ = new Subject<GameState>()
   private _secondsPlayed = 0
   private _timeout: NodeJS.Timeout
+  private _performedFirstClick = false
 
-  constructor(boardSize: number, private _mineCount: number) {
-    this._board = new Board(boardSize, _mineCount)
+  constructor(boardSize: number, mineCount: number) {
+    this._board = new Board(boardSize, mineCount)
+    this._mineCount = mineCount
 
     this._timeout = setInterval(() => {
       this._secondsPlayed++
@@ -39,14 +42,22 @@ export class Minesweeper {
 
   reveal(row: number, column: number) {
     if (this._result !== "running") return
-    const result = this._board._reveal(row, column, true)
+    const result = this._board._reveal({
+      row,
+      column,
+      revealedFromClick: true,
+      isFirstClick: !this._performedFirstClick,
+    })
+    if (!this._performedFirstClick) {
+      this._performedFirstClick = true
+    }
     if (result === "mine") {
       this._result = "lost"
       this._board.revealAllMines()
       this._stopClock()
     }
     // check for win
-    if (
+    else if (
       this._board.size * this._board.size - this._mineCount ===
       this._board.revealedCount
     ) {

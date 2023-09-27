@@ -14,11 +14,17 @@ export class Board {
 
     this._board = []
     for (let i = 0; i < size; i++) {
-      this._board.push(new Array(size))
+      const row = []
+      for (let j = 0; j < size; j++) {
+        row.push(new Cell(i, j, false, this))
+      }
+      this._board.push(row)
     }
+  }
 
+  initialiseBoard(clickedRow: number, clickedColumn: number) {
     while (this._minesPlaced < this._mineCount) {
-      this._placeMines()
+      this._placeMines(clickedRow, clickedColumn)
     }
   }
 
@@ -76,28 +82,52 @@ export class Board {
     }
   }
 
-  _reveal(row: number, column: number, revealedFromClick: boolean) {
+  _reveal({
+    row,
+    column,
+    revealedFromClick,
+    isFirstClick,
+  }: {
+    row: number
+    column: number
+    revealedFromClick: boolean
+    isFirstClick: boolean
+  }) {
+    if (isFirstClick) {
+      this.initialiseBoard(row, column)
+    }
     return this._board[row][column]._reveal(revealedFromClick)
   }
 
-  private _placeMines() {
+  private _placeMines(clickedRow: number, clickedColum: number) {
     for (let i = 0; i < this._size; i++) {
       for (let j = 0; j < this._size; j++) {
-        const existingCell = this._board[i][j]
-        if (!existingCell || !existingCell.hasMine) {
+        if (this.isNeighbour(i, j, clickedRow, clickedColum)) {
+          continue
+        }
+        if (!this._board[i][j].hasMine && this._minesPlaced < this._mineCount) {
           if (Math.random() < 1 / this._size) {
-            if (this._minesPlaced < this._mineCount) {
-              this._board[i][j] = new Cell(i, j, true, this)
-              this._minesPlaced++
-            } else {
-              this._board[i][j] = new Cell(i, j, false, this)
-            }
-          } else {
-            this._board[i][j] = new Cell(i, j, false, this)
+            this._board[i][j] = new Cell(i, j, true, this)
+            this._minesPlaced++
           }
         }
       }
     }
+  }
+
+  private isNeighbour(
+    row: number,
+    column: number,
+    clickedRow: number,
+    clickedColum: number
+  ) {
+    const isRowNeighbour =
+      clickedRow === row || clickedRow === row - 1 || clickedRow === row + 1
+    const isColumnNeighbour =
+      clickedColum === column ||
+      clickedColum === column - 1 ||
+      clickedColum === column + 1
+    return isRowNeighbour && isColumnNeighbour
   }
 
   private _printBoard() {
