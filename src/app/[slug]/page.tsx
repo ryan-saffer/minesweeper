@@ -1,4 +1,8 @@
-import MinesweeperBoard from "../../components/MinesweeperBoard"
+import dynamic from "next/dynamic"
+
+const Minesweeper = dynamic(() => import("../../components/MinesweeperBoard"), {
+  ssr: false,
+})
 
 export default function Page({
   params,
@@ -7,10 +11,10 @@ export default function Page({
 }) {
   switch (params.slug) {
     case "easy":
-      return <MinesweeperBoard size={7} mines={8} />
+      return <Minesweeper size={7} mines={8} />
     case "medium":
-      return <MinesweeperBoard size={15} mines={50} />
+      return <Minesweeper size={15} mines={50} />
     case "hard":
-      return <MinesweeperBoard size={26} mines={170} />
+      return <Minesweeper size={26} mines={170} />
   }
 }
