@@ -11,11 +11,15 @@ import QuestionMark from "./icons/QuestionMark"
 import Border from "./Border"
 import Header from "./Header"
 
-const size = 18
-
-export default function MinesweeperBoard() {
+export default function MinesweeperBoard({
+  size,
+  mines,
+}: {
+  size: number
+  mines: number
+}) {
   const [minesweeper, setMinesweeper] = useState(
-    () => new Minesweeper(size, size * 2)
+    () => new Minesweeper(size, mines)
   )
   const [gameState, setGameState] = useState(minesweeper.initialState)
 
@@ -38,7 +42,7 @@ export default function MinesweeperBoard() {
   }
 
   const reset = () => {
-    const minesweeper = new Minesweeper(size, size * 2)
+    const minesweeper = new Minesweeper(size, mines)
     setMinesweeper(minesweeper)
     setGameState(minesweeper.initialState)
   }
@@ -113,13 +117,11 @@ export default function MinesweeperBoard() {
         }
         reset={reset}
       />
-      {/* <div className=""> */}
       <div
         className="grid w-max mt-[70px] overflow-hidden"
         style={{
           gridTemplateColumns: `repeat(${size + 2}, auto)`,
           gridTemplateRows: `repeat(${size + 2}, auto)`,
-          // minWidth: 40 + 40 * size,
         }}
       >
         {renderTopBottomBorder({ type: "top", includeCorner: false })}
@@ -156,20 +158,6 @@ export default function MinesweeperBoard() {
         ))}
         {renderTopBottomBorder({ type: "bottom", includeCorner: true })}
       </div>
-      {gameState.result !== "running" && (
-        <div className="flex flex-col justify-center items-center pt-8">
-          <h1 className="text-center text-2xl pb-2">
-            {gameState.result === "lost" ? "You lost!" : "You won!"}
-          </h1>
-          <button
-            className="bg-red-400 w-min px-5 py-2 mt-2 rounded-md"
-            onClick={reset}
-          >
-            Reset
-          </button>
-        </div>
-      )}
-      {/* </div> */}
     </div>
   )
 }
