@@ -8,7 +8,7 @@ import Mine from "./icons/Mine"
 import NumberIcon from "./icons/NumberIcon"
 import IncorrectFlag from "./icons/IncorrectFlag"
 import QuestionMark from "./icons/QuestionMark"
-import Border from "./Border"
+import Border, { TopBottomBorder } from "./Border"
 import Header from "./Header"
 
 export default function MinesweeperBoard({
@@ -72,32 +72,6 @@ export default function MinesweeperBoard({
     }
   }
 
-  const renderTopBottomBorder = ({
-    type,
-    includeCorner,
-  }: {
-    type: "top" | "bottom"
-    includeCorner: boolean
-  }) => {
-    const result = []
-    result.push(
-      <Border
-        key="first"
-        type={includeCorner ? `${type}-left` : "left-borderless"}
-      />
-    )
-    for (let i = 0; i < size; i++) {
-      result.push(<Border key={i} type={type} />)
-    }
-    result.push(
-      <Border
-        key="last"
-        type={includeCorner ? `${type}-right` : "right-borderless"}
-      />
-    )
-    return result
-  }
-
   return (
     <div
       className={clsx({
@@ -124,7 +98,7 @@ export default function MinesweeperBoard({
           gridTemplateRows: `repeat(${size + 2}, auto)`,
         }}
       >
-        {renderTopBottomBorder({ type: "top", includeCorner: false })}
+        <TopBottomBorder type="top" includeCorner={false} size={size} />
         {gameState.board.map((row, rowIdx) => (
           <Fragment key={rowIdx}>
             {row.map((cell, colIdx) => (
@@ -156,7 +130,7 @@ export default function MinesweeperBoard({
             ))}
           </Fragment>
         ))}
-        {renderTopBottomBorder({ type: "bottom", includeCorner: true })}
+        <TopBottomBorder type="bottom" includeCorner size={size} />
       </div>
     </div>
   )
