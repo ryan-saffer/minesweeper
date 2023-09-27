@@ -9,12 +9,9 @@ import NumberIcon from "./icons/NumberIcon"
 import IncorrectFlag from "./icons/IncorrectFlag"
 import QuestionMark from "./icons/QuestionMark"
 import Border from "./Border"
-import FaceSmile from "./icons/FaceSmile"
-import FaceSad from "./icons/FaceSad"
-import FaceGlasses from "./icons/FaceGlasses"
-import NumberDisplay from "./NumberDisplay"
+import Header from "./Header"
 
-const size = 7
+const size = 18
 
 export default function MinesweeperBoard() {
   const [minesweeper, setMinesweeper] = useState(
@@ -98,36 +95,33 @@ export default function MinesweeperBoard() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div
+      className={clsx({
+        "flex justify-center": window.innerWidth > 40 * size + 40,
+      })}
+    >
+      <Header
+        size={size}
+        time={gameState.secondsPlayed}
+        flagsLeft={gameState.flagsLeft}
+        face={
+          gameState.result === "running"
+            ? "happy"
+            : gameState.result === "lost"
+            ? "sad"
+            : "sunglasses"
+        }
+        reset={reset}
+      />
+      {/* <div className=""> */}
       <div
-        className={`p-10 w-fit grid`}
+        className="grid w-max mt-[70px] overflow-hidden"
         style={{
-          gridTemplateColumns: `repeat(${size + 2}, minmax(0, 1fr))`,
-          gridTemplateRows: `minmax(0, 0.5fr) minmax(0, 1.5fr) minmax(0, 0.5fr) repeat(${size}, minmax(0, 1fr)) minmax(0, 0.5fr)`,
+          gridTemplateColumns: `repeat(${size + 2}, auto)`,
+          gridTemplateRows: `repeat(${size + 2}, auto)`,
+          // minWidth: 40 + 40 * size,
         }}
       >
-        {renderTopBottomBorder({ type: "top", includeCorner: true })}
-        <Border type="left" />
-        <div
-          className="bg-[#C0C0C0] flex justify-between items-center px-2"
-          style={{ gridColumnStart: 2, gridColumnEnd: size + 2 }}
-        >
-          <NumberDisplay value={gameState.flagsLeft} />
-          <div
-            className="bg-[#BDBDBD] h-10 w-10 aspect-square flex justify-center border border-[#848484] border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4 cursor-pointer relative"
-            onClick={reset}
-          >
-            {gameState.result === "running" ? (
-              <FaceSmile />
-            ) : gameState.result === "lost" ? (
-              <FaceSad />
-            ) : (
-              <FaceGlasses />
-            )}
-          </div>
-          <NumberDisplay value={gameState.secondsPlayed} />
-        </div>
-        <Border type="right" />
         {renderTopBottomBorder({ type: "top", includeCorner: false })}
         {gameState.board.map((row, rowIdx) => (
           <Fragment key={rowIdx}>
@@ -175,6 +169,7 @@ export default function MinesweeperBoard() {
           </button>
         </div>
       )}
+      {/* </div> */}
     </div>
   )
 }

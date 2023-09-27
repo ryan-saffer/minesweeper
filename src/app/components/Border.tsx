@@ -22,7 +22,7 @@ export default function Border({
         "self-end": type.includes("top"),
         "w-5 border-l-white border-l-4 border-r-[#7B7B7B] border-r-4":
           type === "left" || type === "right",
-        "h-5 border-t-white border-t-4 border-b-[#7B7B7B] border-b-4":
+        "h-5 w-10 border-t-white border-t-4 border-b-[#7B7B7B] border-b-4":
           type === "top" || type === "bottom",
         "h-5 w-5 border-t-white border-t-4 border-l-white border-l-4":
           type === "top-left",
@@ -37,4 +37,32 @@ export default function Border({
       })}
     />
   )
+}
+
+export function TopBottomBorder({
+  size,
+  type,
+  includeCorner,
+}: {
+  size: number
+  type: "top" | "bottom"
+  includeCorner: boolean
+}) {
+  const result = []
+  result.push(
+    <Border
+      key="first"
+      type={includeCorner ? `${type}-left` : "left-borderless"}
+    />
+  )
+  for (let i = 0; i < size; i++) {
+    result.push(<Border key={i} type={type} />)
+  }
+  result.push(
+    <Border
+      key="last"
+      type={includeCorner ? `${type}-right` : "right-borderless"}
+    />
+  )
+  return result
 }
