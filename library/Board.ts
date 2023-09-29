@@ -64,6 +64,9 @@ export class Board {
       for (let j = 0; j < this.size; j++) {
         const cell = this._board[i][j]
         if (cell.hasMine && !cell.hasFlag) {
+          if (cell.hasQuestionMark) {
+            cell.toggleFlag()
+          }
           cell.toggleFlag()
         } else {
           cell._reveal()
@@ -107,7 +110,14 @@ export class Board {
         }
         if (!this._board[i][j].hasMine && this._minesPlaced < this._mineCount) {
           if (Math.random() < 1 / this._size) {
-            this._board[i][j] = new Cell(i, j, true, this)
+            // flags can be placed for the first click, so tell the new cell if it already had a flag
+            this._board[i][j] = new Cell(
+              i,
+              j,
+              true,
+              this,
+              this._board[i][j].hasFlag
+            )
             this._minesPlaced++
           }
         }

@@ -11,11 +11,18 @@ export class Cell {
   private _value = 0
   private _isLosingMine = false
 
-  constructor(row: number, column: number, hasMine: boolean, board: Board) {
+  constructor(
+    row: number,
+    column: number,
+    hasMine: boolean,
+    board: Board,
+    hasFlag = false
+  ) {
     this._board = board
     this._row = row
     this._column = column
     this._hasMine = hasMine
+    this._hasFlag = hasFlag
   }
 
   get value() {
@@ -72,7 +79,7 @@ export class Cell {
     // check all neighbours for 0, and if so, reveal
     if (this.value === 0 && !this.hasFlag) {
       this._iterateNeighbours((cell) => {
-        if (!cell.revealed) {
+        if (!cell.revealed && !cell.hasFlag) {
           cell._reveal(revealedFromClick)
         }
       })
