@@ -10,6 +10,8 @@ import IncorrectFlag from "./icons/IncorrectFlag"
 import QuestionMark from "./icons/QuestionMark"
 import Border, { TopBottomBorder } from "./Border"
 import Header from "./Header"
+import useIsMouseDown from "../app/hooks/useIsMouseDown"
+import { twMerge } from "tw-merge"
 
 export default function MinesweeperBoard({
   size,
@@ -30,10 +32,16 @@ export default function MinesweeperBoard({
     return () => subscription.unsubscribe()
   }, [minesweeper])
 
+  const mouseIsDown = useIsMouseDown()
+  const [[hoveredRow, hoveredCol], setHoveredCell] = useState<[number, number]>(
+    [-1, -1]
+  )
+
   const handleClick = (e: MouseEvent, row: number, col: number) => {
     e.preventDefault()
 
-    if (e.type === "click") {
+    if (e.type === "mouseup") {
+      if (e.button === 2) return
       minesweeper.reveal(row, col)
     }
     if (e.type === "contextmenu") {
@@ -45,6 +53,14 @@ export default function MinesweeperBoard({
     const minesweeper = new Minesweeper(size, mines)
     setMinesweeper(minesweeper)
     setGameState(minesweeper.initialState)
+  }
+
+  const isHoveredOn = (row: number, column: number) => {
+    return (
+      row === hoveredRow &&
+      column === hoveredCol &&
+      gameState.result === "running"
+    )
   }
 
   const renderIcon = (
@@ -105,18 +121,27 @@ export default function MinesweeperBoard({
               <Fragment key={colIdx}>
                 {colIdx === 0 && <Border type="left" />}
                 <div
-                  className={clsx(
-                    "bg-[#BDBDBD] w-10 h-10 flex justify-center items-center border border-[#848484] cursor-pointer",
-                    {
-                      "border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4":
-                        !cell.revealed,
-                      "border-t-[#7B7B7B] border-t border-b-[#7B7B7B] border-b":
-                        cell.revealed,
-                      "bg-[#fc0303]": cell.isLosingMine,
-                    }
+                  className={twMerge(
+                    clsx(
+                      "bg-[#BDBDBD] w-10 h-10 flex justify-center items-center border cursor-pointer border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4",
+                      {
+                        "border-[#7B7B7B] border":
+                          cell.revealed ||
+                          (!cell.hasFlag &&
+                            mouseIsDown &&
+                            isHoveredOn(rowIdx, colIdx)),
+                        "p-1":
+                          cell.hasQuestionMark &&
+                          mouseIsDown &&
+                          isHoveredOn(rowIdx, colIdx),
+                        "bg-[#fc0303]": cell.isLosingMine,
+                      }
+                    )
                   )}
-                  onClick={(e) => handleClick(e, rowIdx, colIdx)}
+                  onMouseUp={(e) => handleClick(e, rowIdx, colIdx)}
                   onContextMenu={(e) => handleClick(e, rowIdx, colIdx)}
+                  onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
+                  onMouseLeave={() => setHoveredCell([-1, -1])}
                 >
                   {renderIcon(
                     cell.revealed,

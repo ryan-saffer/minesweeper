@@ -4,6 +4,11 @@ import NumberDisplay from "./NumberDisplay"
 import FaceGlasses from "./icons/FaceGlasses"
 import FaceSad from "./icons/FaceSad"
 import FaceSmile from "./icons/FaceSmile"
+import useIsMouseDown from "../app/hooks/useIsMouseDown"
+import { twMerge } from "tw-merge"
+import { useState } from "react"
+import FaceSurprised from "./icons/FaceSuprised"
+import useIsScrolling from "../app/hooks/useIsScrolling"
 
 export default function Header({
   size,
@@ -18,7 +23,10 @@ export default function Header({
   face: "happy" | "sad" | "sunglasses"
   reset: () => void
 }) {
-  // const minWidth = 40 + 40 * size
+  const mouseIsDown = useIsMouseDown()
+  const isScrolling = useIsScrolling()
+  const [isHoveredOn, setIsHoveredOn] = useState(false)
+
   return (
     <div
       className={"grid fixed top-0"}
@@ -34,15 +42,27 @@ export default function Header({
       >
         <NumberDisplay value={flagsLeft} />
         <div
-          className="bg-[#BDBDBD] h-10 w-10 aspect-square flex justify-center border border-[#848484] border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4 cursor-pointer relative"
-          onClick={reset}
+          className={twMerge(
+            clsx(
+              "bg-[#BDBDBD] h-10 w-10 aspect-square flex justify-center border border-[#848484] border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4 cursor-pointer relative",
+              {
+                "border border-b-white border--4 border-r-white border-r-4 border-t-[#7B7B7B] border-t-4 border-l-[#7B7B7B] border-l-4":
+                  isHoveredOn && mouseIsDown,
+              }
+            )
+          )}
+          onMouseUp={reset}
+          onMouseEnter={() => setIsHoveredOn(true)}
+          onMouseLeave={() => setIsHoveredOn(false)}
         >
-          {face === "happy" ? (
-            <FaceSmile />
+          {face === "sunglasses" ? (
+            <FaceGlasses />
           ) : face === "sad" ? (
             <FaceSad />
+          ) : mouseIsDown || isScrolling ? (
+            <FaceSurprised />
           ) : (
-            <FaceGlasses />
+            <FaceSmile />
           )}
         </div>
         <NumberDisplay value={time} />
