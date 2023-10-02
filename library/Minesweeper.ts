@@ -41,7 +41,7 @@ export class Minesweeper {
   }
 
   reveal(row: number, column: number) {
-    if (this._result !== "running") return
+    if (this._result !== "running") return "finished"
     const result = this._board._reveal({
       row,
       column,
@@ -66,6 +66,7 @@ export class Minesweeper {
       this._stopClock()
     }
     this._emitState()
+    return result
   }
 
   private _stopClock() {
@@ -73,9 +74,10 @@ export class Minesweeper {
   }
 
   toggleFlag(row: number, column: number) {
-    if (this._result !== "running") return
-    this._board.toggleFlag(row, column)
+    if (this._result !== "running") return 'finished'
+    const result = this._board.toggleFlag(row, column)
     this._emitState()
+    return result
   }
 
   private _emitState() {

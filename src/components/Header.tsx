@@ -4,11 +4,11 @@ import NumberDisplay from "./NumberDisplay"
 import FaceGlasses from "./icons/FaceGlasses"
 import FaceSad from "./icons/FaceSad"
 import FaceSmile from "./icons/FaceSmile"
-import useIsMouseDown from "../app/hooks/useIsMouseDown"
+import useIsMouseDown from "../hooks/useIsMouseDown"
 import { twMerge } from "tw-merge"
 import { useState } from "react"
 import FaceSurprised from "./icons/FaceSuprised"
-import useIsScrolling from "../app/hooks/useIsScrolling"
+import useIsScrolling from "../hooks/useIsScrolling"
 
 export default function Header({
   size,

@@ -19,6 +19,7 @@ export default function useIsMouseDown() {
     return () => {
       window.removeEventListener("mousedown", handleMouseDown)
       window.removeEventListener("mouseup", handleMouseUp)
+      window.removeEventListener("contextmenu", handleMouseUp)
     }
   }, [handleMouseDown, handleMouseUp])
 

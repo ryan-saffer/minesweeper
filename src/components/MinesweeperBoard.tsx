@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, MouseEvent, useEffect, useState } from "react"
+import { Fragment, MouseEvent, useEffect, useMemo, useState } from "react"
 import { Minesweeper } from "@minesweeper"
 import { clsx } from "clsx"
 import Flag from "./icons/Flag"
@@ -10,8 +10,9 @@ import IncorrectFlag from "./icons/IncorrectFlag"
 import QuestionMark from "./icons/QuestionMark"
 import Border, { TopBottomBorder } from "./Border"
 import Header from "./Header"
-import useIsMouseDown from "../app/hooks/useIsMouseDown"
+import useIsMouseDown from "../hooks/useIsMouseDown"
 import { twMerge } from "tw-merge"
+import useSound from "../hooks/useSound"
 
 export default function MinesweeperBoard({
   size,
@@ -24,13 +25,18 @@ export default function MinesweeperBoard({
     () => new Minesweeper(size, mines)
   )
   const [gameState, setGameState] = useState(minesweeper.initialState)
+  const [playReveal, playFlag, playShuffle, playBomb, playReset, playWin] =
+    useSound()
 
   useEffect(() => {
     const subscription = minesweeper.gameState$.subscribe((state) => {
       setGameState(state)
+      if (state.result === "won") {
+        playWin()
+      }
     })
     return () => subscription.unsubscribe()
-  }, [minesweeper])
+  }, [minesweeper, playWin])
 
   const mouseIsDown = useIsMouseDown()
   const [[hoveredRow, hoveredCol], setHoveredCell] = useState<[number, number]>(
@@ -38,14 +44,30 @@ export default function MinesweeperBoard({
   )
 
   const handleClick = (e: MouseEvent, row: number, col: number) => {
-    e.preventDefault()
-
+    if (e.button === 3) {
+      // back button
+      return
+    }
     if (e.type === "mouseup") {
       if (e.button === 2) return
-      minesweeper.reveal(row, col)
+      const result = minesweeper.reveal(row, col)
+      if (typeof result === "number") {
+        if (result !== 0) {
+          playReveal()
+        } else {
+          playShuffle()
+        }
+      }
+      if (result === "mine") {
+        playBomb()
+      }
     }
     if (e.type === "contextmenu") {
-      minesweeper.toggleFlag(row, col)
+      e.preventDefault()
+      const result = minesweeper.toggleFlag(row, col)
+      if (result === "flag") {
+        playFlag()
+      }
     }
   }
 
@@ -53,6 +75,7 @@ export default function MinesweeperBoard({
     const minesweeper = new Minesweeper(size, mines)
     setMinesweeper(minesweeper)
     setGameState(minesweeper.initialState)
+    playReset()
   }
 
   const isHoveredOn = (row: number, column: number) => {

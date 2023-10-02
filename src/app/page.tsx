@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import useSound from "../hooks/useSound"
 
 export default function Home() {
   return (
@@ -30,10 +31,12 @@ function Level({
   size: number
   mines: number
 }) {
+  const [playReveal] = useSound()
   return (
     <Link
       className="h-20 w-40 md:w-60 p-8 md:p-12 mt-4 flex flex-col justify-center items-center bg-[#BDBDBD] border border-[#848484] cursor-pointer active:border-b-white active:border-b-4 active:border-r-white active:border-r-4 active:border-t-[#7B7B7B] active:border-t-4 active:border-l-[#7B7B7B] active:border-l-4 border-t-white border-t-4 border-l-white border-l-4 border-b-[#7B7B7B] border-b-4 border-r-[#7B7B7B] border-r-4"
       href={`/${name.toLowerCase()}`}
+      onClick={() => playReveal()}
     >
       <h3 className="font-serif text-2xl md:text-4xl">{name}</h3>
       <p className="font-serif text-sm md:text-lg w-max">{`${size}x${size} - ${mines} mines`}</p>

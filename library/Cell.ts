@@ -65,10 +65,10 @@ export class Cell {
     }
   }
 
-  _reveal(revealedFromClick = false) {
-    if (this.revealed) return
-    if (this._hasFlag && this._hasMine) return
-    if (this._hasFlag && revealedFromClick) return
+  _reveal(revealedFromClick = false): "mine" | "flag" | "revealed" | number {
+    if (this.revealed) return "revealed"
+    if (this._hasFlag && this._hasMine) return "flag"
+    if (this._hasFlag && revealedFromClick) return "flag"
     if (revealedFromClick && this._hasMine) {
       this._isLosingMine = true
     }
@@ -84,6 +84,8 @@ export class Cell {
         }
       })
     }
+
+    return this.value
   }
 
   private _calculateValue() {

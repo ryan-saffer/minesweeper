@@ -80,9 +80,12 @@ export class Board {
     cell.toggleFlag()
     if (cell.hasFlag) {
       this._flagsPlaced++
+      return 'flag'
     } else if (cell.hasQuestionMark) {
       this._flagsPlaced--
+      return 'question-mark'
     }
+    return 'empty'
   }
 
   _reveal({
